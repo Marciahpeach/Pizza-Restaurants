@@ -1,37 +1,32 @@
-from flask import Blueprint, jsonify, request
-from server.app import db
+from flask import Blueprint, request, jsonify
 from server.models.restaurant import Restaurant
+from server.models import db
 
-restaurant_bp = Blueprint("restaurants", __name__)
+restaurant_bp = Blueprint('restaurants', __name__)
 
-@restaurant_bp.route("/restaurants", methods=["GET"])
-def get_restaurants():
-    restaurants = Restaurant.query.all()
-    return jsonify([{"id": r.id, "name": r.name, "address": r.address} for r in restaurants])
+# POST /restaurants
+@restaurant_bp.route('/restaurants', methods=['POST'])
+def create_restaurant():
+    data = request.get_json()
+    try:
+        new_restaurant = Restaurant(name=data['name'], address=data['address'])
+        db.session.add(new_restaurant)
+        db.session.commit()
+        return jsonify({
+            "id": new_restaurant.id,
+            "name": new_restaurant.name,
+            "address": new_restaurant.address
+        }), 201
+    except Exception as e:
+        return jsonify({"error": str(e)}), 400
 
-@restaurant_bp.route("/restaurants/<int:id>", methods=["GET"])
-def get_restaurant(id):
-    restaurant = Restaurant.query.get(id)
-    if not restaurant:
-        return jsonify({"error": "Restaurant not found"}), 404
-
-    return jsonify({
-        "id": restaurant.id,
-        "name": restaurant.name,
-        "address": restaurant.address,
-        "pizzas": [{
-            "id": rp.pizza.id,
-            "name": rp.pizza.name,
-            "ingredients": rp.pizza.ingredients
-        } for rp in restaurant.restaurant_pizzas]
-    })
-
-@restaurant_bp.route("/restaurants/<int:id>", methods=["DELETE"])
+# DELETE /restaurants/<int:id>
+@restaurant_bp.route('/restaurants/<int:id>', methods=['DELETE'])
 def delete_restaurant(id):
     restaurant = Restaurant.query.get(id)
-    if not restaurant:
+    if restaurant:
+        db.session.delete(restaurant)
+        db.session.commit()
+        return '', 204
+    else:
         return jsonify({"error": "Restaurant not found"}), 404
-
-    db.session.delete(restaurant)
-    db.session.commit()
-    return '', 204
