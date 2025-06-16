@@ -47,16 +47,15 @@ source venv/bin/activate
 
 INSTALL DEPENDENCIES
 pip install -r requirements.txt
-
-Set the Flask app:
+SET THE FLASK APP:
 export FLASK_APP=server/app.py
-Initialize and migrate database:
 
+Initialize and migrate database:
 flask db init
 flask db migrate -m "Initial"
 flask db upgrade
-Seed the database (optional):
 
+Seed the database (optional):
 python server/seed.py
 
 START THE DEVELOPMENT SERVER:
