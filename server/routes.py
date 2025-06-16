@@ -1,4 +1,4 @@
-# server/routes.py
+
 from flask import Blueprint, jsonify, request
 from server.models import db
 from server.models.pizza import Pizza
@@ -7,7 +7,7 @@ from server.models.restaurant_pizza import RestaurantPizza
 
 api = Blueprint('api', __name__)
 
-# ---------------------------
+
 # GET /pizzas
 @api.route("/pizzas", methods=["GET"])
 def get_pizzas():
@@ -18,7 +18,6 @@ def get_pizzas():
         "ingredients": pizza.ingredients
     } for pizza in pizzas]), 200
 
-# ---------------------------
 # GET /restaurants
 @api.route("/restaurants", methods=["GET"])
 def get_restaurants():
@@ -29,8 +28,8 @@ def get_restaurants():
         "address": r.address
     } for r in restaurants]), 200
 
-# ---------------------------
-# GET /restaurants/<int:id>
+
+# GET /restaurants
 @api.route("/restaurants/<int:id>", methods=["GET"])
 def get_restaurant(id):
     restaurant = Restaurant.query.get(id)
@@ -52,8 +51,7 @@ def get_restaurant(id):
         ]
     }), 200
 
-# ---------------------------
-# DELETE /restaurants/<int:id>
+# DELETE /restaurants/
 @api.route("/restaurants/<int:id>", methods=["DELETE"])
 def delete_restaurant(id):
     restaurant = Restaurant.query.get(id)
@@ -63,8 +61,8 @@ def delete_restaurant(id):
     db.session.delete(restaurant)
     db.session.commit()
     return '', 204
-# ---------------------------
-# DELETE /pizzas/<int:id>
+
+# DELETE /pizzaas
 @api.route("/pizzas/<int:id>", methods=["DELETE"])
 def delete_pizza(id):
     pizza = Pizza.query.get(id)
@@ -76,7 +74,6 @@ def delete_pizza(id):
     return '', 204
 
 
-# ---------------------------
 # POST /restaurants
 @api.route("/restaurants", methods=["POST"])
 def create_restaurant():
@@ -93,7 +90,7 @@ def create_restaurant():
     except Exception as e:
         return jsonify({"error": "Invalid data"}), 400
 
-# ---------------------------
+
 # POST /pizzas
 @api.route("/pizzas", methods=["POST"])
 def create_pizza():
@@ -110,7 +107,7 @@ def create_pizza():
     except Exception as e:
         return jsonify({"error": "Invalid data"}), 400
 
-# ---------------------------
+
 # POST /restaurant_pizzas
 @api.route("/restaurant_pizzas", methods=["POST"])
 def add_pizza_to_restaurant():

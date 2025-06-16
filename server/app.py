@@ -10,7 +10,7 @@ def create_app():
     db.init_app(app)
     migrate.init_app(app, db)
 
-    # ✅ Register blueprint here
+  
     from server.routes import api
     app.register_blueprint(api)
 
